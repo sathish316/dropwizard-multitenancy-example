@@ -1,18 +1,19 @@
 package com.multitenancy.example.dao;
 
+import com.fk.dropwizard.multitenancy.TenantResolver;
+import com.fk.dropwizard.multitenancy.hibernate.dao.AbstractMultitenantDAO;
 import com.google.inject.Inject;
 import com.multitenancy.example.core.Project;
-import io.dropwizard.hibernate.AbstractDAO;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 
 import java.util.List;
 
-public class ProjectDAO extends AbstractDAO<Project> {
+public class ProjectDAO extends AbstractMultitenantDAO<Project> {
 
     @Inject
-    public ProjectDAO(SessionFactory factory) {
-        super(factory);
+    public ProjectDAO(SessionFactory factory, TenantResolver tenantResolver) {
+        super(factory, tenantResolver);
     }
 
     public long create(Project project){

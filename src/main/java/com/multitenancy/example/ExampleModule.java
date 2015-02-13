@@ -1,11 +1,12 @@
 package com.multitenancy.example;
 
+import com.fk.dropwizard.multitenancy.TenantResolver;
+import com.fk.dropwizard.multitenancy.hibernate.bundle.MultitenantHibernateBundle;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.hibernate.HibernateBundle;
-import io.dropwizard.hibernate.ScanningHibernateBundle;
 import io.dropwizard.migrations.MigrationsBundle;
 import org.hibernate.SessionFactory;
 
@@ -28,8 +29,8 @@ public class ExampleModule extends AbstractModule {
 
     @Provides
     @Singleton
-    public HibernateBundle provideHibernateBundle(){
-        return new ScanningHibernateBundle<ExampleConfiguration>("com.multitenancy.example") {
+    public HibernateBundle provideHibernateBundle(TenantResolver tenantResolver){
+        return new MultitenantHibernateBundle<ExampleConfiguration>("com.multitenancy.example", tenantResolver) {
             @Override
             public DataSourceFactory getDataSourceFactory(ExampleConfiguration configuration) {
                 return configuration.getDataSourceFactory();

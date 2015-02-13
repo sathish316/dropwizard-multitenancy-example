@@ -1,19 +1,21 @@
 package com.multitenancy.example.core;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fk.dropwizard.multitenancy.hibernate.TenantEntity;
 import io.dropwizard.jackson.JsonSnakeCase;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name="projects")
+@FilterDef(name = "tenant", parameters = {@ParamDef(name = "tenant_id", type = "string")}, defaultCondition = ":tenant_id = tenant_id")
+@Filter(name = "tenant")
 @JsonSnakeCase
-public class Project {
-    enum Status {
-        Started, Completed, Failed
-    }
-
+public class Project implements TenantEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty

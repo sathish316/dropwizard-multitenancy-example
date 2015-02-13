@@ -1,5 +1,6 @@
 package com.multitenancy.example;
 
+import com.fk.dropwizard.multitenancy.filter.TenantFilter;
 import com.google.inject.Injector;
 import com.google.inject.Stage;
 import com.hubspot.dropwizard.guice.GuiceBundle;
@@ -35,6 +36,11 @@ public class ExampleApplication extends Application<ExampleConfiguration> {
 
     @Override
     public void run(ExampleConfiguration configuration, Environment environment) throws Exception {
+        environment.jersey().getResourceConfig().getContainerRequestFilters().add(getTenantFilter());
+    }
+
+    private TenantFilter getTenantFilter() {
+        return getInjector().getInstance(TenantFilter.class);
     }
 
     public Injector getInjector(){
