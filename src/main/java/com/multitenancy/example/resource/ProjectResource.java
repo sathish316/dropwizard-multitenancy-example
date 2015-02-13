@@ -1,6 +1,8 @@
 package com.multitenancy.example.resource;
 
 import com.codahale.metrics.annotation.Timed;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.multitenancy.example.core.Project;
 import com.multitenancy.example.dao.ProjectDAO;
 import io.dropwizard.hibernate.UnitOfWork;
@@ -16,9 +18,11 @@ import java.util.List;
 @Path("/projects")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@Singleton
 public class ProjectResource {
     private final ProjectDAO dao;
 
+    @Inject
     public ProjectResource(ProjectDAO dao) {
         this.dao = dao;
     }

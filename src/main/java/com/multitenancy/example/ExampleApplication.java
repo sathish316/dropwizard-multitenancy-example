@@ -1,29 +1,16 @@
 package com.multitenancy.example;
 
-import com.multitenancy.example.dao.ProjectDAO;
-import com.multitenancy.example.resource.ProjectResource;
+import com.google.inject.Injector;
+import com.google.inject.Stage;
+import com.hubspot.dropwizard.guice.GuiceBundle;
 import io.dropwizard.Application;
-import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.hibernate.HibernateBundle;
-import io.dropwizard.hibernate.ScanningHibernateBundle;
 import io.dropwizard.migrations.MigrationsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
 public class ExampleApplication extends Application<ExampleConfiguration> {
-    private MigrationsBundle<ExampleConfiguration> migrations = new MigrationsBundle<ExampleConfiguration>() {
-        @Override
-        public DataSourceFactory getDataSourceFactory(ExampleConfiguration configuration) {
-            return configuration.getDataSourceFactory();
-        }
-    };
-
-    private final HibernateBundle<ExampleConfiguration> hibernate = new ScanningHibernateBundle<ExampleConfiguration>("com.multitenancy.example.core") {
-        @Override
-        public DataSourceFactory getDataSourceFactory(ExampleConfiguration configuration) {
-            return configuration.getDataSourceFactory();
-        }
-    };
+    private GuiceBundle<ExampleConfiguration> guiceBundle;
 
     public static void main(String[] args) throws Exception {
         new ExampleApplication().run(args);
@@ -36,13 +23,21 @@ public class ExampleApplication extends Application<ExampleConfiguration> {
 
     @Override
     public void initialize(Bootstrap<ExampleConfiguration> bootstrap) {
-        bootstrap.addBundle(migrations);
-        bootstrap.addBundle(hibernate);
+        this.guiceBundle = GuiceBundle.<ExampleConfiguration>newBuilder()
+                .addModule(new ExampleModule())
+                .enableAutoConfig(getClass().getPackage().getName())
+                .setConfigClass(ExampleConfiguration.class)
+                .build(Stage.DEVELOPMENT);
+        bootstrap.addBundle(guiceBundle);
+        bootstrap.addBundle(getInjector().getInstance(MigrationsBundle.class));
+        bootstrap.addBundle(getInjector().getInstance(HibernateBundle.class));
     }
 
     @Override
     public void run(ExampleConfiguration configuration, Environment environment) throws Exception {
-        ProjectDAO projectDAO = new ProjectDAO(hibernate.getSessionFactory());
-        environment.jersey().register(new ProjectResource(projectDAO));
+    }
+
+    public Injector getInjector(){
+        return guiceBundle.getInjector();
     }
 }

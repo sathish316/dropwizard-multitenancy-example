@@ -1,5 +1,6 @@
 package com.multitenancy.example.dao;
 
+import com.google.inject.Inject;
 import com.multitenancy.example.core.Project;
 import io.dropwizard.hibernate.AbstractDAO;
 import org.hibernate.SessionFactory;
@@ -9,6 +10,7 @@ import java.util.List;
 
 public class ProjectDAO extends AbstractDAO<Project> {
 
+    @Inject
     public ProjectDAO(SessionFactory factory) {
         super(factory);
     }

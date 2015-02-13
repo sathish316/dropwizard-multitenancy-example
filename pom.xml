@@ -32,6 +32,11 @@
             <version>5.1.30</version>
         </dependency>
         <dependency>
+            <groupId>com.hubspot.dropwizard</groupId>
+            <artifactId>dropwizard-guice</artifactId>
+            <version>0.7.2</version>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>3.8.1</version>
